@@ -20,7 +20,7 @@ public class RegionFinder {
 	private BufferedImage image;                            // the image in which to find regions
 	private BufferedImage recoloredImage;                   // the image with identified regions recolored
 
-	private ArrayList<ArrayList<Point>> regions;			// a region is a list of points
+	private ArrayList<ArrayList<Point>> regions = new ArrayList<ArrayList<Point>>();         // a region is a list of points
 															// so the identified regions are in a list of lists of points
 
 	public RegionFinder() {
@@ -51,41 +51,42 @@ public class RegionFinder {
 	 * Sets regions to the flood-fill regions in the image, similar enough to the trackColor.
 	 */
 	public void findRegions(Color targetColor) {
-        ArrayList<Point> region = new ArrayList<Point>(); // list of points in region
         Deque<Point> stack = new ArrayDeque<Point>(); // list of points to be visited
         BufferedImage visited = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB); // image that holds visited pixels
 
         // loop over entire image
         for (int y = 0; y < image.getHeight(); y++) {
             for (int x = 0; x < image.getWidth(); x++) {
-                Color color = new Color(image.getRGB(x,y)); // new color to test vs. target color
-                Point point = new Point(x,y); // new point instance
 
-                if ((visited.getRGB(x, y) == 0) && (colorMatch(color, targetColor))) { // if conditions match
-                    stack.push(point); // add this point to the stack
+                if ((visited.getRGB(x, y) == 0) && (colorMatch(new Color(image.getRGB(x,y)), targetColor))) { // if conditions match
+                    ArrayList<Point> region = new ArrayList<>(); // list of points in region
+                    stack.push(new Point(x,y)); // add this point to the stack
 
-                    if (!stack.isEmpty()){
-                        region.add(stack.pop()); // push point off stack add to region
-                        visited.setRGB(x, y, 1);
+                    // if or whille???
+                    while (!(stack.isEmpty())){
+                        Point point = stack.pop();
+                        region.add(point); // push point off stack add to region
 
                         // visit neighbors but be careful not to go outside image (max, min stuff).
-                        for (int ny = Math.max(0, y - 1);
-                             ny < Math.min(image.getHeight(), y + 1 + 1);
+                        for (int ny = Math.max(0, (int)point.getY() - 1);
+                             ny < Math.min(image.getHeight(), (int)point.getY() + 1 + 1);
                              ny++) {
-                            for (int nx = Math.max(0, x - 1);
-                                 nx < Math.min(image.getWidth(), x + 1 + 1);
+                            for (int nx = Math.max(0, (int)point.getX() - 1);
+                                 nx < Math.min(image.getWidth(), (int)point.getX() + 1 + 1);
                                  nx++) {
-                                if ((visited.getRGB(x, y) == 0) && (colorMatch(color, targetColor))) { // if conditions match
-                                    stack.push(point); // add this point to the stack
+                                if ((visited.getRGB(nx, ny) == 0) && (colorMatch(new Color(image.getRGB(nx,ny)), targetColor))) { // if conditions match
+                                    stack.push(new Point(nx, ny)); // add this point to the stack
                                 }
+                                visited.setRGB(nx, ny, 1); // mark point as visited
                             }
                         }
 
                     }
-                    if (region.size() >= minRegion){ regions.add(region);
+                    if (region.size() >= minRegion) {
+                        regions.add(region); // add this region to regions list if big enough
                     }
-                }
 
+                }
             }
         }
 	}
@@ -93,24 +94,34 @@ public class RegionFinder {
 	/**
 	 * Tests whether the two colors are "similar enough" (your definition, subject to the static threshold).
 	 */
-	private static boolean colorMatch(Color c1, Color c2) {
-		if (Math.abs(c1.getRed()-c2.getRed()) > 20) { 
+	private static boolean colorMatch(Color c1, Color c2){
+		if (Math.abs(c1.getRed()-c2.getRed()) > maxColorDiff){
 			return false;
 		}
-		else if ((Math.abs(c1.getGreen()-c2.getGreen()) > 20)) { 
-			return false; 
+		else if (Math.abs(c1.getGreen() - c2.getGreen())> maxColorDiff){
+			return false;
 		}
-		else if ((Math.abs(c1.getBlue()-c2.getBlue()) > 20)) { 
-			return false; 
+		else if (Math.abs(c1.getBlue() - c2.getBlue()) > maxColorDiff){
+			return false;
 		}
-		else  return true;
+		else {
+			return true;
+		}
 	}
 
 	/**
 	 * Returns the largest region detected (if any region has been detected)
 	 */
 	public ArrayList<Point> findLargestRegion() {
-		// TODO: YOUR CODE HERE
+		ArrayList<Point> maxList = regions.get(0);
+		int maxSize = maxList.size();
+		for (ArrayList<Point> list: regions){
+			if (list.size() > maxSize){
+				maxList = list;
+				maxSize = list.size();
+			}
+		}
+		return maxList;
 	}
 
 	/**
@@ -122,6 +133,11 @@ public class RegionFinder {
 		// First copy the original
 		recoloredImage = new BufferedImage(image.getColorModel(), image.copyData(null), image.getColorModel().isAlphaPremultiplied(), null);
 		// Now recolor the regions
-		// TODO: YOUR CODE HERE
-	}
+		for (ArrayList<Point> region: regions){
+			int c = (int) (Math.random() * 16777216); // generates random number between 0 and 16777216
+			for (Point point: region){
+				recoloredImage.setRGB((int)point.getX(), (int)point.getY(), c);
+			}
+		}
+    }
 }
