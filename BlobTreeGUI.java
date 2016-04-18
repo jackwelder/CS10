@@ -104,42 +104,25 @@ public class BlobTreeGUI extends DrawingGUI {
         // Set the color for this level
         g.setColor(rainbow[level % rainbow.length]);
         // Draw this node's blob and lines through it
-        // Recurse with children
-        if (tree.noChildren()) {
-            System.out.println("no kids");
-            tree.getBlob().draw(g);
-            g.drawLine(tree.getX1(), (int) tree.getBlob().getY(), tree.getX2(), (int) tree.getBlob().getY());
-            g.drawLine((int) tree.getBlob().getX(), tree.getY1(), (int) tree.getBlob().getX(), tree.getY2());
-        }
+//        // Recurse with children
 
-        else if (tree.hasC1()) {
-            System.out.println("top right");
-            tree.getBlob().draw(g);
-            g.drawLine(tree.getX1(), (int) tree.getBlob().getY(), tree.getX2(), (int) tree.getBlob().getY());
-            g.drawLine((int) tree.getBlob().getX(), tree.getY1(), (int) tree.getBlob().getX(), tree.getY2());
+		tree.getBlob().draw(g);
+		g.drawLine(tree.getX1(), (int) tree.getBlob().getY(), tree.getX2(), (int) tree.getBlob().getY());
+		g.drawLine((int) tree.getBlob().getX(), tree.getY1(), (int) tree.getBlob().getX(), tree.getY2());
+
+
+        if (tree.hasC1()) {
             drawTree(g, tree.getC1(), level + 1);
         }
 
-        else if (tree.hasC2()) {
-            System.out.println("top left");
-            tree.getBlob().draw(g);
-            g.drawLine(tree.getX1(), (int) tree.getBlob().getY(), tree.getX2(), (int) tree.getBlob().getY());
-            g.drawLine((int) tree.getBlob().getX(), tree.getY1(), (int) tree.getBlob().getX(), tree.getY2());
+        if (tree.hasC2()) {
             drawTree(g, tree.getC2(), level + 1);
         }
 
-        else if (tree.hasC3()) {
-            System.out.println("bottom left");
-            tree.getBlob().draw(g);
-            g.drawLine(tree.getX1(), (int) tree.getBlob().getY(), tree.getX2(), (int) tree.getBlob().getY());
-            g.drawLine((int) tree.getBlob().getX(), tree.getY1(), (int) tree.getBlob().getX(), tree.getY2());
+        if (tree.hasC3()) {
             drawTree(g, tree.getC3(), level + 1);
         }
-        else if (tree.hasC4()) {
-            System.out.println("bottom right");
-            tree.getBlob().draw(g);
-            g.drawLine(tree.getX1(), (int) tree.getBlob().getY(), tree.getX2(), (int) tree.getBlob().getY());
-            g.drawLine((int) tree.getBlob().getX(), tree.getY1(), (int) tree.getBlob().getX(), tree.getY2());
+        if (tree.hasC4()) {
             drawTree(g, tree.getC4(), level + 1);
 
         }
