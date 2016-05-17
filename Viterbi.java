@@ -7,6 +7,7 @@ package HMM;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Collections;
 
 public class Viterbi {
 
@@ -15,7 +16,8 @@ public class Viterbi {
 
         ArrayList<String> tags = new ArrayList<>();
         ArrayList<HashMap<String, String>> backpointers = new ArrayList<>();
-        String[] words = string.split(" ");
+        String stripped = string.replaceAll("[^a-zA-Z]+", " ");
+        String[] words = stripped.split(" ");
 
         HashSet<String> currentStates = new HashSet<>();
         currentStates.add("#");
@@ -57,7 +59,6 @@ public class Viterbi {
             currentStates = nextStates;
             currentScores = nextScores;
         }
-        System.out.println(backpointers);
         Double max = Double.NEGATIVE_INFINITY;
         String maxPos = "";
         for (String pos : currentScores.keySet()) {
@@ -72,6 +73,7 @@ public class Viterbi {
             HashMap<String, String> bp = backpointers.get(i);
             maxPos = bp.get(maxPos);
         }
+    Collections.reverse(tags);
     return tags;
     }
 }

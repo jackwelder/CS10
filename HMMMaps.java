@@ -108,15 +108,13 @@ public class HMMMaps {
         return map;
     }
 
-
-
     public static void main(String[] args){
         try{
             ArrayList<String> words = toList("simple-train-sentences.txt");
             ArrayList<String> tags = toList("simple-train-tags.txt");
             HashMap<String, HashMap<String, Double>> before = makeTransitionMap(tags);
-            HashMap<String, HashMap<String, Double>> trans = normalizeProb(before);
             System.out.println(before);
+            HashMap<String, HashMap<String, Double>> trans = normalizeProb(before);
             System.out.println(trans);
 
             HashMap<String, HashMap<String, Double>> obsbefore = makeObservationMap(words, tags);
@@ -124,11 +122,10 @@ public class HMMMaps {
             System.out.println(obsbefore);
             System.out.println(obs);
             System.out.println(Viterbi.viterbi(obs, trans, "he trains the dog"));
-
         }
+
         catch (IOException e){
             System.err.println("404 Exception");
         }
-
-        }
+    }
 }
